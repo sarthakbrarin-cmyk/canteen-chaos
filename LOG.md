@@ -33,17 +33,17 @@ order screen round in different places.
 
 
 
-## CC-0X — "<the complaint, in short>"
+### CC-01 — "The search suggestions are behind everything"
 
-**Reproduced:**
+**Reproduced:** Typed "momo" into the search bar. The dropdown appeared, but items past the first suggestion were covered by the category bar below it. Clicking anywhere on the lower suggestions didn't select anything because the category bar was sitting in front.
 
-**Cause:**
+**Cause:** `.search-wrap` had `z-index: 1`, creating a stacking context with priority 1. The `.cat-tabs` bar right below it had `z-index: 40`. Even though `.suggest-box` had `z-index: 100`, it was trapped inside `.search-wrap`'s stacking context, so the category tabs were painted above it and intercepted mouse clicks.
 
-**Fix:**
+**Fix:** Changed `.search-wrap`'s z-index to 50 in `frontend/style.css` so its stacking context sits above `.cat-tabs` (40).
 
-**Checked:**
+**Checked:** Typed various dish names in the search bar. The suggestion dropdown renders cleanly above the category strip, hover styles trigger on all items, and clicking any suggestion populates the search and opens the dish.
 
-**Time:**
+**Time:** about 15 minutes.
 
 
 
