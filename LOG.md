@@ -44,6 +44,20 @@ order screen round in different places.
 **Checked:** Typed various dish names in the search bar. The suggestion dropdown renders cleanly above the category strip, hover styles trigger on all items, and clicking any suggestion populates the search and opens the dish.
 
 **Time:** about 15 minutes.
+ 
+ 
+ 
+### CC-02 — "Can't read anything in dark mode"
+
+**Reproduced:** Toggled the theme switch to dark mode. The card backgrounds turned dark brown/black (`#201913`), but the dish names and prices became nearly unreadable, while the meta info in grey remained visible.
+
+**Cause:** `.dish-body` had `color: #2b2118;` explicitly hardcoded. In light mode this matched `--ink`, but in dark mode `--card` is `#201913` and `--ink` is `#f2e8df`. Because of the hardcoded color, `.dish-name` and `.dish-price` stayed dark brown on the almost identical dark card background.
+
+**Fix:** Replaced the hardcoded hex with `color: var(--ink);` on `.dish-body` in `frontend/style.css` so it uses the theme variable.
+
+**Checked:** Toggled between light and dark modes. Dish titles and prices are crisp and legible in both themes.
+
+**Time:** about 10 minutes.
 
 
 
