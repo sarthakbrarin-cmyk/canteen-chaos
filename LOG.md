@@ -58,6 +58,20 @@ order screen round in different places.
 **Checked:** Toggled between light and dark modes. Dish titles and prices are crisp and legible in both themes.
 
 **Time:** about 10 minutes.
+ 
+ 
+ 
+### CC-03 — "The menu is wider than my phone"
+
+**Reproduced:** Resized the viewport down to mobile width (around 500–600px). The menu grid stretched horizontally beyond the viewport, creating an annoying horizontal scrollbar. The right-hand column was pushed half off-screen, cutting off the Add to Cart buttons on those dishes.
+
+**Cause:** Inside the `@media (max-width: 760px)` breakpoint, `.name-btn` was set to `width: max-content;`. In CSS Grid, tracks sized with `1fr` resolve with a minimum size of `auto`. When dishes have lengthy titles (such as "Paneer Butter Masala with Butter Naan"), `max-content` prevented the button from wrapping and forced the entire grid column to expand to fit the text, overflowing the screen width.
+
+**Fix:** Removed `.name-btn { width: max-content; }` from the mobile media query in `frontend/style.css`, letting dish names wrap naturally as intended by `.dish-name { overflow-wrap: break-word; }`.
+
+**Checked:** Tested viewport widths from 360px up to 760px. Dish cards stay completely inside their columns, long dish names wrap cleanly across multiple lines, and no horizontal scrollbar appears.
+
+**Time:** about 25 minutes.
 
 
 
