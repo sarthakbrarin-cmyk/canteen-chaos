@@ -86,6 +86,20 @@ order screen round in different places.
 **Checked:** At 768px and 820px tablet widths, clicked "Add to Cart" and the favorite star. Clicks register immediately, incrementing cart quantities and toggling favorite state.
 
 **Time:** about 20 minutes.
+ 
+ 
+ 
+### CC-05 — "The category bar scrolls away on my phone"
+
+**Reproduced:** Opened the site on a mobile screen size (<=480px) and scrolled down through the dish list. The sticky filter and category bar scrolled away out of view instead of remaining pinned at the top like it did on desktop.
+
+**Cause:** The `@media (max-width: 480px)` stylesheet set `.view { overflow-x: hidden; }`. Setting any overflow other than `visible` on an ancestor element creates a new clipping/scroll context that breaks standard `position: sticky` on descendant elements (here `.filters`).
+
+**Fix:** Removed `.view { overflow-x: hidden; }` from the mobile media query in `frontend/style.css`. The underlying overflow cause had already been solved by fixing dish title button wrapping in CC-03.
+
+**Checked:** Tested scrolling through the menu on mobile screen widths (375px, 412px, 480px). The category and filter bar sticks reliably to the top of the viewport while browsing dishes.
+
+**Time:** about 15 minutes.
 
 
 
