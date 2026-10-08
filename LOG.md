@@ -72,6 +72,20 @@ order screen round in different places.
 **Checked:** Tested viewport widths from 360px up to 760px. Dish cards stay completely inside their columns, long dish names wrap cleanly across multiple lines, and no horizontal scrollbar appears.
 
 **Time:** about 25 minutes.
+ 
+ 
+ 
+### CC-04 — "The buttons don't work on my tablet"
+
+**Reproduced:** Set browser viewport width to 800px (tablet range: 761px–900px). Clicked the "Add to Cart" button and the star favorite icon on various dish cards. Neither button reacted, yet on desktop (>900px) and phone (<760px) both worked normally.
+
+**Cause:** In `frontend/style.css`, `@media (min-width: 761px) and (max-width: 900px)` injected pseudo-elements `.dish-card::after` (positioned over the bottom 58px with z-index 3) and `.img-wrap::after` (positioned over the top-right 52x52px with z-index 1). Because `pointer-events: none` was omitted, these invisible overlay elements sat right on top of the Add button and favorite star, capturing all click and touch events.
+
+**Fix:** Added `pointer-events: none;` to `.dish-card::after, .img-wrap::after` under the tablet media query block in `frontend/style.css`.
+
+**Checked:** At 768px and 820px tablet widths, clicked "Add to Cart" and the favorite star. Clicks register immediately, incrementing cart quantities and toggling favorite state.
+
+**Time:** about 20 minutes.
 
 
 
