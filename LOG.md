@@ -100,6 +100,20 @@ order screen round in different places.
 **Checked:** Tested scrolling through the menu on mobile screen widths (375px, 412px, 480px). The category and filter bar sticks reliably to the top of the viewport while browsing dishes.
 
 **Time:** about 15 minutes.
+ 
+ 
+ 
+### CC-06 — "I ordered more than they had"
+
+**Reproduced:** Checked a dish with only 2 items in stock (e.g. Samosa). In the UI or via direct API call, requested a quantity of 5. The order passed validation and was accepted with status 201, leaving negative stock on the server.
+
+**Cause:** In `backend/logic/validation.js`, `validateLine` verified that the dish was served, not disabled, and not sold out (`dish.stock <= 0`), but never checked whether the requested `qty` was greater than `dish.stock`. Additionally, `reserveStock` blindly decremented stock without checking if there was enough left, and `setQty` on the frontend only checked `MAX_PER_DISH` (10).
+
+**Fix:** In `backend/logic/validation.js`, added a check in `validateLine` rejecting any line where `qty > Number(dish.stock)`. Added a check in `reserveStock` verifying `dish.stock >= item.qty`. Also added a stock check in `frontend/js/state.js` inside `setQty` to stop users before submitting.
+
+**Checked:** Attempted to add and place orders for quantities exceeding stock. The UI shows "Only 2 available" and the backend returns a 400 validation error if a request attempts to order more than available stock.
+
+**Time:** about 30 minutes.
 
 
 
