@@ -114,6 +114,20 @@ order screen round in different places.
 **Checked:** Attempted to add and place orders for quantities exceeding stock. The UI shows "Only 2 available" and the backend returns a 400 validation error if a request attempts to order more than available stock.
 
 **Time:** about 30 minutes.
+ 
+ 
+ 
+### CC-07 — "Cancelling makes it worse"
+
+**Reproduced:** Placed an order for 1 dish when stock was 5 (stock dropped to 4). Immediately cancelled the order. Instead of restoring to 5, the stock dropped further down to 3.
+
+**Cause:** In `backend/logic/validation.js`, `releaseStock` had a sign error on line 125: `stock: dish.stock - line.qty`. It subtracted the order line quantity from the current stock instead of adding it back.
+
+**Fix:** Changed subtraction to addition (`dish.stock + line.qty`) in `releaseStock`.
+
+**Checked:** Placed an order and then cancelled it; checked the dish stock on `/api/menu/:id`. Stock correctly restored by the exact ordered quantity.
+
+**Time:** about 10 minutes.
 
 
 
