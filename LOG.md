@@ -128,6 +128,20 @@ order screen round in different places.
 **Checked:** Placed an order and then cancelled it; checked the dish stock on `/api/menu/:id`. Stock correctly restored by the exact ordered quantity.
 
 **Time:** about 10 minutes.
+ 
+ 
+ 
+### CC-08 — "An old coupon still works"
+
+**Reproduced:** Added items to the cart and applied coupon `FRESHERS24`. The coupon granted Rs. 30 discount and was accepted at quote and checkout despite having expired on 2024-09-30.
+
+**Cause:** In `backend/routes/coupons.routes.js`, the `GET /api/coupons` route filtered out expired coupons using `new Date(c.expiresAt) > now`. However, `pricing.applyCoupon` in `backend/logic/pricing.js` only checked `usesLeft`, `minOrder`, `vegOnly`, and `slots`. It never compared `coupon.expiresAt` with `now`.
+
+**Fix:** Added an expiration check in `applyCoupon` in `backend/logic/pricing.js`: if `coupon.expiresAt && new Date(coupon.expiresAt) <= now`, return `{ valid: false, discount: 0, reason: 'This coupon has expired' }`.
+
+**Checked:** Tested quote with `FRESHERS24`; received error "This coupon has expired" with 0 discount. Valid active coupons (`BYTE10`, `FLAT50`) continue to apply discounts properly.
+
+**Time:** about 15 minutes.
 
 
 
