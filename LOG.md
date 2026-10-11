@@ -142,6 +142,20 @@ order screen round in different places.
 **Checked:** Tested quote with `FRESHERS24`; received error "This coupon has expired" with 0 discount. Valid active coupons (`BYTE10`, `FLAT50`) continue to apply discounts properly.
 
 **Time:** about 15 minutes.
+ 
+ 
+ 
+### CC-09 — "The menu shows more dishes than it should"
+
+**Reproduced:** Loaded the homepage. Instead of loading the initial batch of 5 dishes and showing a "Load more" button / infinite scroll sentinel, the page rendered the entire menu list of all 37 dishes at once on the first request.
+
+**Cause:** In `backend/logic/search.js`, `paginate` computed `const items = list.slice(start, start + perPage);` correctly, but then returned `items: list,` in the response payload. The slice was discarded and the unpaged full list was always returned.
+
+**Fix:** Changed `items: list` to `items` in `paginate` in `backend/logic/search.js`.
+
+**Checked:** Fetched `/api/menu?limit=5&page=1` and `/api/menu?limit=5&page=2`. Page 1 returns only the first 5 dishes and page 2 returns the next 5 dishes. Verified in the UI that 5 cards render initially and additional dishes load progressively on scroll / "Load more".
+
+**Time:** about 15 minutes.
 
 
 
