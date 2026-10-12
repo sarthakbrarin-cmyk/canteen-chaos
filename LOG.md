@@ -156,6 +156,20 @@ order screen round in different places.
 **Checked:** Fetched `/api/menu?limit=5&page=1` and `/api/menu?limit=5&page=2`. Page 1 returns only the first 5 dishes and page 2 returns the next 5 dishes. Verified in the UI that 5 cards render initially and additional dishes load progressively on scroll / "Load more".
 
 **Time:** about 15 minutes.
+ 
+ 
+ 
+### CC-10 — "Sorting by price is backwards"
+
+**Reproduced:** Selected "Price: low to high" from the sort dropdown. The most expensive dishes (Thali / Paneer Butter Masala at Rs. 140–160) appeared first. Selected "Price: high to low" and the cheapest dish (Chai at Rs. 15) appeared first. Both sorting options were inverted.
+
+**Cause:** In `backend/logic/search.js`, the `SORTERS` dictionary had inverted comparators: `'price-asc'` used `(a, b) => b.price - a.price` (which sorts descending), while `'price-desc'` used `(a, b) => a.price - b.price` (which sorts ascending).
+
+**Fix:** Swapped the comparator implementations in `backend/logic/search.js` so `'price-asc'` calculates `a.price - b.price` and `'price-desc'` calculates `b.price - a.price`.
+
+**Checked:** Tested both sort options via the frontend dropdown and verified via `smoke.js` test checking `sort by price works`. Low-to-high returns cheapest items first and high-to-low returns most expensive first.
+
+**Time:** about 10 minutes.
 
 
 
